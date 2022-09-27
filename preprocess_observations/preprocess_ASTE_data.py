@@ -134,12 +134,12 @@ def process_velocities(uIn, vIn, AngleCS, AngleSN):
     return uOut, vOut
         
 
-def output_data3D(outDir, varOut, lat, lon, z, varOutName, varOutUnits):
+def output_data3D(outDir, varOut, lat, lon, z, varOutName, varOutUnits, date):
     """
     Load in all monthly climatology and process for MPAS-Analysis.
     """
 
-    outFileName = '{}/{}.nc'.format(outDir,varOutName)
+    outFileName = '{}/ASTE_2002-2017_monthly_{}_ArcticOcean_13x13km_{}.nc'.format(outDir,varOutName,date)
     
     if os.path.exists(outDir):
         ds = xr.open_dataset(outFileName)
@@ -178,12 +178,12 @@ def output_data3D(outDir, varOut, lat, lon, z, varOutName, varOutUnits):
 
     return ds
 
-def output_data2D(outDir, varOut, lat, lon, varOutName, varOutUnits):
+def output_data2D(outDir, varOut, lat, lon, varOutName, varOutUnits, date):
     """
     Load in all monthly climatology and process for MPAS-Analysis.
     """
 
-    outFileName = '{}/{}.nc'.format(outDir,varOutName)
+    outFileName = '{}/ASTE_2002-2017_monthly_{}_ArcticOcean_13x13km_{}.nc'.format(outDir,varOutName,date)
     
     if os.path.exists(outDir):
         ds = xr.open_dataset(outFileName)
@@ -231,6 +231,8 @@ def main():
                         help="Directory where final preprocessed observation "
                              "are stored")
     args = parser.parse_args()
+
+    date = '20220927'
                      
     # Decide what ASTE fields we want to grab and process
     varibles    = ['THETA','SALT','UVELMASS','VVELMASS','ETAN']
@@ -282,19 +284,19 @@ def main():
     for prefix in varibles:
         if prefix == 'THETA':
             print("Writing PT...")
-            output_data3D(args.outDir, pt, lat, lon, z, 'Temperature','C')
+            output_data3D(args.outDir, pt, lat, lon, z, 'pot_temp','C', date)
         if prefix == 'SALT':
             print("Writing SA...")
-            output_data3D(args.outDir, sa, lat, lon, z, 'Salinity','psu')
+            output_data3D(args.outDir, sa, lat, lon, z, 'salinity','psu', date)
         elif prefix == 'UVELMASS':
             print("Writing U...")
-            output_data3D(args.outDir, u, lat, lon, z, 'uVel','m/s')
+            output_data3D(args.outDir, u, lat, lon, z, 'u_vel','m/s', date)
         elif prefix == 'VVELMASS':
             print("Writing V...")
-            output_data3D(args.outDir, v, lat, lon, z, 'vVel','m/s')
+            output_data3D(args.outDir, v, lat, lon, z, 'v_vel','m/s', date)
         elif prefix == 'ETAN':
             print("Writing SSH...")
-            output_data2D(args.outDir, SSH, lat, lon, z, 'SSH','m')
+            output_data2D(args.outDir, SSH, lat, lon, z, 'ssh','m', date)
 
 
 if __name__ == "__main__":
